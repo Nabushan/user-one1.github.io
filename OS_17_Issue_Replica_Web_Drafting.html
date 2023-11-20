@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script>
+        function performLocationFetching() {
+            document.getElementById("Fetch_Button").innerHTML = "Fetching Location"
+            if(navigator.permissions && navigator.permissions.query) {
+                navigator.permissions.query({name: 'geolocation'})
+                .then((result) => {
+                    const permission = result.state
+
+                    if(permission === "granted" || permission === "prompt") {
+                        getLocation()
+                    }
+                    else {
+                        console.log("Permission denied...")
+                    }
+                })
+            }
+            else {
+                console.log("Failed to get permissions...")
+            }
+        }
+
+        function getLocation() {
+            if(navigator.geolocation) {
+                console.log("About to fetch location...")
+                navigator.geolocation.getCurrentPosition(showPosition);
+            }
+            else {
+                console.log("Geo-Location is not supported in this browser.")
+                // change the innerHTML to show the upcoming error.
+            }
+        }
+
+        function showPosition(position) {
+            var latitude = position.coords.latitude
+            var longitude = position.coords.longitude
+            var func_name = "reverseGeoCode";
+
+            var requiredData = {
+                "arguments": JSON.stringify({
+                "lat": latitude,
+                "long": longitude
+                })
+            };
+
+            console.log(requiredData)
+            document.getElementById("Latitide_Label").innerHTML += latitude
+            document.getElementById("Longitude_Label").innerHTML += longitude
+            // use innerHTML to display the data on screen.
+        }
+    </script>
+    <style>
+        .centerAlign {
+            /* justify-content: center; */
+            margin-left: auto;
+            margin-right: auto;
+            background-color: red;
+        }
+
+        .blockDiplay {
+            display: block;
+            text-align: center;
+        }
+
+        .button {
+            margin-left: auto;
+            margin-right: auto;
+            margin-top: 30px;
+            margin-bottom: 30px;
+        }
+    </style>
+</head>
+<body>
+    <div class="centerAlign">
+        <label id="Latitide_Label" class="blockDiplay"> Fetched Latitude is => </label>
+        <label id="Longitude_Label" class="blockDiplay"> Fetched Longitude is => </label>
+    </div>
+    <button onclick="performLocationFetching()" class="blockDiplay button" id="Fetch_Button"> Tap To Fetch Location </button>
+    <div>
+        <!-- Error div needed here -->
+    </div>
+</body>
+</html>
