@@ -14,29 +14,35 @@
 
                     if(permission === "granted" || permission === "prompt") {
                         getLocation()
+                        addProgressStateElement("Permission Granred.", "inprogress")
                     }
                     else {
                         console.log("Permission denied...")
+                        addProgressStateElement("Permission Denied.", "failed")
                     }
                 })
             }
             else {
                 console.log("Failed to get permissions...")
+                addProgressStateElement("Failed to get permission.", "failed")
             }
         }
 
         function getLocation() {
             if(navigator.geolocation) {
                 console.log("About to fetch location...")
+                addProgressStateElement("About to fetch location.", "inprogress")
                 navigator.geolocation.getCurrentPosition(showPosition);
             }
             else {
                 console.log("Geo-Location is not supported in this browser.")
+                addProgressStateElement("Geo-Location is not supported in this browser.", "failed")
                 // change the innerHTML to show the upcoming error.
             }
         }
 
         function showPosition(position) {
+            addProgressStateElement("Inside showPosition success case of fetching", "inprogress")
             var latitude = position.coords.latitude
             var longitude = position.coords.longitude
             var func_name = "reverseGeoCode";
@@ -51,7 +57,31 @@
             console.log(requiredData)
             document.getElementById("Latitide_Label").innerHTML += latitude
             document.getElementById("Longitude_Label").innerHTML += longitude
+            addProgressStateElement("Fetching of Location Successfull", "success")
             // use innerHTML to display the data on screen.
+        }
+
+        function addProgressStateElement(state, progressState) {
+            let parent = document.getElementById("Progress_State")
+
+            let newDiv = document.createElement('div')
+            // newDiv.setAttribute('id', "new_element")
+            var className = "newElement "
+            if(progressState === "success") {
+                className += "success"
+            }
+            else if(progressState === "inprogress") {
+                className += "inProgress"
+            }
+            else {
+                className += "failed"
+            }
+
+            console.log(className)
+            newDiv.setAttribute('class', className)
+            newDiv.textContent = state
+
+            parent.appendChild(newDiv)
         }
     </script>
     <style>
@@ -73,6 +103,29 @@
             margin-top: 30px;
             margin-bottom: 30px;
         }
+
+        .newElement {
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+            width: 80%;
+            color: white;
+            font-size: small;
+            line-height: 1.1em;
+            word-spacing: 1em;
+        }
+
+        .inProgress {
+            background-color: aqua;
+        }
+
+        .success {
+            background-color: greenyellow;
+        }
+
+        .failed {
+            background-color: red;
+        }
     </style>
 </head>
 <body>
@@ -83,6 +136,9 @@
     <button onclick="performLocationFetching()" class="blockDiplay button" id="Fetch_Button"> Tap To Fetch Location </button>
     <div>
         <!-- Error div needed here -->
+        <div id="Progress_State" class="blockDiplay">
+             
+        </div>
     </div>
 </body>
 </html>
